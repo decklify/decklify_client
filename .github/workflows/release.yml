@@ -1,0 +1,47 @@
+name: Build and Release Fat JAR for Raspberry pi
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      # 1. Check out the exact tag that triggered the workflow
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # 2. Set up Java
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '23'
+          cache: sbt
+
+      # 3. Set up sbt
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
+
+      # 4. Build the fat JAR
+      - name: Build fat JAR
+        run: sbt assembly
+
+      # 5. Create a GitHub Release and upload the JAR
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            target/**/PiDeck-assembly*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
