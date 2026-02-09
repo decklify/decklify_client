@@ -66,7 +66,7 @@ apt install -y \
 if [[ ! -d "/home/$SUDO_USER/.sdkman" ]]; then
     sudo -u "$SUDO_USER" bash -c "curl -s 'https://get.sdkman.io?ci=true' | bash"
   else
-    echo "sdkman is already installed!"
+    echo "✅ Sdkman is already installed!"
 fi
 
 sudo -u "$SUDO_USER" bash -c "
@@ -92,7 +92,7 @@ mkdir -p "$TMP/cache"
 echo "⬇️  Downloading launcher script"
 
 curl -fsSL \
-  https://raw.githubusercontent.com/YOU/REPO/main/launch.sh \
+  https://raw.githubusercontent.com/decklify/decklify_client/refs/heads/master/launch.sh \
   -o "$TMP/launcher.sh"
 
 chmod +x "$TMP/launcher.sh"
