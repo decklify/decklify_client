@@ -33,7 +33,7 @@ object App extends JFXApp3 {
     borderPane.setBottom(BottomBar(lm))
 
     stage = new JFXApp3.PrimaryStage {
-      title = "PiDeck"
+      title = "Decklify"
       scene = new Scene(WIDTH, HEIGHT) {
         root = borderPane
         fullScreen = true
