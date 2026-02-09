@@ -13,7 +13,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "Decklify",
-    version := "0.1.0",
+    version := "0.1.1",
     libraryDependencies ++= Seq(
       "org.scalafx" %% "scalafx" % "24.0.2-R36",
       "org.scalameta" %% "munit" % "1.0.0" % Test,
