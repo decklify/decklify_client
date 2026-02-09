@@ -1,8 +1,8 @@
-package deckt.ui
+package decklify.ui
 
-import deckt.logic.LayoutManager
-import deckt.ui.components.Clock
-import deckt.ui.components.PageButton
+import decklify.logic.LayoutManager
+import decklify.ui.components.Clock
+import decklify.ui.components.PageButton
 import scalafx.geometry.Insets
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.layout.Region

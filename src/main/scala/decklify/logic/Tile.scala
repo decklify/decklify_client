@@ -1,7 +1,7 @@
-package deckt.logic
+package decklify.logic
 
-import deckt.http.HttpService
-import deckt.ui.showNonFatal
+import decklify.http.HttpService
+import decklify.ui.showNonFatal
 import scalafx.animation.ScaleTransition
 import scalafx.application.Platform
 import scalafx.beans.property.ObjectProperty

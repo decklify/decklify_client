@@ -1,6 +1,6 @@
-package deckt.model
+package decklify.model
 
-import deckt.logic.TileAction
+import decklify.logic.TileAction
 import io.circe._
 import io.circe.generic.semiauto._
 

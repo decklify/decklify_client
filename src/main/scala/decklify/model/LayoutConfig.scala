@@ -1,4 +1,4 @@
-package deckt.model
+package decklify.model
 
 import io.circe._
 import io.circe.generic.semiauto._

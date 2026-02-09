@@ -1,4 +1,4 @@
-package deckt.ui.utils
+package decklify.ui.utils
 
 import scalafx.scene.image.ImageView
 import scalafx.scene.layout.Region

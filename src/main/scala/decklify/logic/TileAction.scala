@@ -1,4 +1,4 @@
-package deckt.logic
+package decklify.logic
 
 import io.circe._
 import io.circe.generic.semiauto._

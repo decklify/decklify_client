@@ -1,6 +1,6 @@
-package deckt.logic
+package decklify.logic
 
-import deckt.ui.utils.ImageCover
+import decklify.ui.utils.ImageCover
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos
 import scalafx.scene.image.ImageView

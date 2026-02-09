@@ -1,4 +1,4 @@
-# Deck!t
+# Decklify
 
 A free and open-source control pad written in Scala.
 

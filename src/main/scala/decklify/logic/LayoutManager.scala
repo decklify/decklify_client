@@ -1,4 +1,4 @@
-package deckt.logic
+package decklify.logic
 
 import scalafx.beans.property.IntegerProperty
 import scalafx.beans.property.ObjectProperty

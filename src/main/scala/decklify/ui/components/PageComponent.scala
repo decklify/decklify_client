@@ -1,6 +1,6 @@
-package deckt.ui.components
+package decklify.ui.components
 
-import deckt.logic.LayoutManager
+import decklify.logic.LayoutManager
 import scalafx.animation.ScaleTransition
 import scalafx.beans.binding.Bindings
 import scalafx.geometry.Insets

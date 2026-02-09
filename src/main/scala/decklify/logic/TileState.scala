@@ -1,4 +1,4 @@
-package deckt.logic
+package decklify.logic
 
 enum TileState {
   case ACTIVE, INACTIVE

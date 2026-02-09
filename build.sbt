@@ -12,7 +12,7 @@ assembly / assemblyMergeStrategy := {
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "deckt",
+    name := "Decklify",
     version := "0.1.0",
     libraryDependencies ++= Seq(
       "org.scalafx" %% "scalafx" % "24.0.2-R36",

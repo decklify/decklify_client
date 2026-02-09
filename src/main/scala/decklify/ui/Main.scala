@@ -1,8 +1,8 @@
-package deckt.ui
+package decklify.ui
 
-import deckt.http.HttpService
-import deckt.logic._
-import deckt.model.LayoutConfig
+import decklify.http.HttpService
+import decklify.logic._
+import decklify.model.LayoutConfig
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.scene.layout.BorderPane

@@ -1,6 +1,6 @@
-package deckt.logic
+package decklify.logic
 
-import deckt.model.LayoutConfig
+import decklify.model.LayoutConfig
 
 object LayoutFactory {
 

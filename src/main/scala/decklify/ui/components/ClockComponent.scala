@@ -1,4 +1,4 @@
-package deckt.ui.components
+package decklify.ui.components
 
 import scalafx.animation.KeyFrame
 import scalafx.animation.Timeline

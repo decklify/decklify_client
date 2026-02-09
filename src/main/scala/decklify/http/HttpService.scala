@@ -1,6 +1,6 @@
-package deckt.http
+package decklify.http
 
-import deckt.model.LayoutConfig
+import decklify.model.LayoutConfig
 import io.circe.parser.decode
 import scalafx.scene.image.Image
 

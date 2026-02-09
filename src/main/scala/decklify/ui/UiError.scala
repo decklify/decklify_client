@@ -1,4 +1,4 @@
-package deckt.ui
+package decklify.ui
 
 import scalafx.application.Platform
 import scalafx.scene.control.Alert
