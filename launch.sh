@@ -40,4 +40,4 @@ fi
 
 echo "🚀 Launching app!"
 
-exec /home/$USER/.sdkman/candidates/java/current/bin/java -jar "$APP_PATH/app.jar"
+exec /home/$USER/.sdkman/candidates/java/current/bin/java -Dprism.order=es2 -Dprism.forceGPU=true -Dmonocle.platform=DRM -jar "$APP_PATH/app.jar"
