@@ -93,9 +93,6 @@ touch "$APP/version.txt"
 mkdir -p "$LOG"
 touch "$LOG/app.log"
 
-chown -R "$SUDO_USER:$SUDO_USER" "$BASE"
-chmod -R 755 "$BASE"
-
 # -----------------------------------------------------------------------------
 # DOWNLOAD LAUNCHER
 # -----------------------------------------------------------------------------
@@ -151,6 +148,9 @@ rm -rf "$BASE"
 
 # Atomic move: TMP → FINAL
 mv "$TMP" "$BASE"
+
+chown -R "$SUDO_USER:$SUDO_USER" "$BASE"
+chmod -R 755 "$BASE"
 
 # Install systemd service
 mv "$BASE/${SERVICE_NAME}.service" \
