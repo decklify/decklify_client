@@ -93,8 +93,8 @@ touch "$APP/version.txt"
 mkdir -p "$LOG"
 touch "$LOG/app.log"
 
-sudo chown -R $SUDO_USER:$SUDO_USER "$BASE"
-sudo chmod -R 755 "$BASE"
+chown -R "$SUDO_USER:$SUDO_USER" "$BASE"
+chmod -R 755 "$BASE"
 
 # -----------------------------------------------------------------------------
 # DOWNLOAD LAUNCHER
