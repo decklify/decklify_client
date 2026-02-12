@@ -40,4 +40,4 @@ fi
 
 echo "🚀 Launching app!"
 
-exec /home/$SUDO_USER/.sdkman/candidates/java/current/bin/java -jar "$APP_PATH/app.jar"
+exec /home/$USER/.sdkman/candidates/java/current/bin/java -jar "$APP_PATH/app.jar"
