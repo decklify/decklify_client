@@ -185,7 +185,9 @@ case class Tile(
 
     createIconView(pane).foreach(content.children.add(_))
 
-    if label.isDefined then content.children.add(createLabel(pane)): Unit
+    label.foreach(l =>
+      if l != "" then content.children.add(createLabel(pane)): Unit
+    )
 
     val glass = createGlassOverlay(pane)
     val highlight = createHighlight(pane)
