@@ -8,7 +8,7 @@ import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.scene.layout.BorderPane
 
-import javax.jmdns.JmDNS
+import javax.jmdns.JmmDNS
 
 object App extends JFXApp3 {
 
@@ -16,7 +16,7 @@ object App extends JFXApp3 {
   val HEIGHT: Double = 600
 
   override def start(): Unit = {
-    val jmdns = JmDNS.create()
+    val jmdns = JmmDNS.Factory.getInstance()
     jmdns.addServiceListener("_decklify._tcp.local.", ServerTracker)
 
     ServerTracker.waitForServer(() => {
