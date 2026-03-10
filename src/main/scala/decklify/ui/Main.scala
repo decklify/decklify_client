@@ -1,11 +1,14 @@
 package decklify.ui
 
 import decklify.http.HttpService
+import decklify.http.ServerTracker
 import decklify.logic._
 import decklify.model.LayoutConfig
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.scene.layout.BorderPane
+
+import javax.jmdns.JmDNS
 
 object App extends JFXApp3 {
 
@@ -13,6 +16,14 @@ object App extends JFXApp3 {
   val HEIGHT: Double = 600
 
   override def start(): Unit = {
+    val jmdns = JmDNS.create()
+    jmdns.addServiceListener("_decklify._tcp.local.", ServerTracker)
+
+    ServerTracker.waitForServer(() => {
+      showFatal("Initialization failure", "Server not found on network", "")
+      throw new IllegalStateException("Server not found")
+    })
+
     val lm = HttpService.fetchLayoutConfig
       .recover(e =>
         showFatal(

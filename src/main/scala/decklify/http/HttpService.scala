@@ -18,7 +18,9 @@ import scala.jdk.FutureConverters._
 import scala.util.Try
 
 object HttpService {
-  private val BASE_URL = "http://pablo.local:8000"
+  private def BASE_URL: String = ServerTracker.getUrl.getOrElse {
+    throw new IllegalStateException("Server not available")
+  }
   private val LAYOUT_URI = URI.create(BASE_URL + "/layout")
   private val MACRO_URI = (macroName: String) =>
     URI.create(BASE_URL + s"/macro/${macroName}")
@@ -93,5 +95,4 @@ object HttpService {
           )
         }
       }
-
 }

@@ -19,7 +19,8 @@ lazy val root = project
       "org.scalameta" %% "munit" % "1.0.0" % Test,
       "io.circe" %% "circe-core" % "0.14.15",
       "io.circe" %% "circe-generic" % "0.14.15",
-      "io.circe" %% "circe-parser" % "0.14.15"
+      "io.circe" %% "circe-parser" % "0.14.15",
+      "org.jmdns" % "jmdns" % "3.6.3"
     ),
     semanticdbEnabled := true,
     scalacOptions += "-Wall"
