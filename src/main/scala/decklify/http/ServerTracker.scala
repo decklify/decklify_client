@@ -27,5 +27,5 @@ object ServerTracker extends ServiceListener {
   def getUrl: Option[String] = serverUrl.get
 
   def waitForServer(error: () => Unit): Unit =
-    if !serverFound.await(10, TimeUnit.SECONDS) then error: Unit
+    if !serverFound.await(10, TimeUnit.SECONDS) then error(): Unit
 }
