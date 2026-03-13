@@ -3,18 +3,19 @@ package decklify.ui
 import decklify.logic.LayoutManager
 import decklify.ui.components.Clock
 import decklify.ui.components.PageButton
+import decklify.ui.components.reloadConfigButton
+import scalafx.beans.property.ObjectProperty
 import scalafx.geometry.Insets
 import scalafx.scene.layout.BorderPane
-import scalafx.scene.layout.Region
 
-def BottomBar(lm: LayoutManager): BorderPane =
+def BottomBar(lm: LayoutManager, parent: BorderPane): BorderPane =
+  val lmObs = ObjectProperty(lm)
   val clock = Clock()
+  val reload = reloadConfigButton(parent, lmObs)
 
   new BorderPane {
     padding = Insets(5)
-    center = PageButton(lm)
+    center = PageButton(lmObs)
     right = clock
-    left = new Region {
-      prefWidth <== clock.width
-    }
+    left = reload
   }

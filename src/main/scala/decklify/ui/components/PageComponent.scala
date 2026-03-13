@@ -1,63 +1,39 @@
 package decklify.ui.components
 
 import decklify.logic.LayoutManager
-import scalafx.animation.ScaleTransition
+import decklify.ui.utils.glassyButton
 import scalafx.beans.binding.Bindings
+import scalafx.beans.property.ObjectProperty
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos
 import scalafx.scene.control.Button
 import scalafx.scene.control.Label
 import scalafx.scene.layout.HBox
-import scalafx.util.Duration
 
-def glassyButton(text: String, onClick: => Unit): Button =
-  new Button(text) {
-    prefWidth = 150
-    prefHeight = 40
-    alignment = Pos.Center
+def _prevButton(lm: ObjectProperty[LayoutManager]): Button =
+  glassyButton("Previous page", lm.get.prevPage)
 
-    style = """
-      -fx-background-color: rgba(255, 255, 255, 0.25);
-      -fx-background-radius: 12;
-      -fx-border-radius: 12;
-      -fx-border-color: rgba(255,255,255,0.3);
-      -fx-border-width: 1;
-      -fx-text-fill: rgba(255,255,255,0.85);
-      -fx-font-weight: bold;
-      -fx-font-size: 14px;
-    """
+def _nextButton(lm: ObjectProperty[LayoutManager]): Button =
+  glassyButton("Next page", lm.get.nextPage)
 
-    onMouseClicked = { _ =>
-      new ScaleTransition(Duration(50), this) {
-        fromX = 1.0
-        fromY = 1.0
-        toX = 0.95
-        toY = 0.95
-        cycleCount = 2
-        autoReverse = true
-      }.play()
-      onClick
-    }
-  }
-
-def _prevButton(lm: LayoutManager): Button =
-  glassyButton("Previous page", lm.prevPage)
-
-def _nextButton(lm: LayoutManager): Button =
-  glassyButton("Next page", lm.nextPage)
-
-def _pageInfo(lm: LayoutManager): Label =
-  val (currentPage, totalPage) = lm.getPageNum
+def _pageInfo(lm: ObjectProperty[LayoutManager]): Label =
   new Label {
     style = "-fx-text-fill: rgba(255,255,255,0.85); -fx-font-weight: bold;"
-    text <== Bindings.createStringBinding(
-      () => s"${currentPage.value + 1}/${totalPage.value}",
-      currentPage,
-      totalPage
-    )
+
+    def rebind(): Unit =
+      val (currentPage, totalPage) = lm.get.getPageNum
+      text <== Bindings.createStringBinding(
+        () => s"${currentPage.value + 1}/${totalPage.value}",
+        currentPage,
+        totalPage
+      )
+
+    rebind()
+
+    lm.addListener((_, _, _) => rebind())
   }
 
-def PageButton(lm: LayoutManager): HBox =
+def PageButton(lm: ObjectProperty[LayoutManager]): HBox =
   new HBox {
     children = Seq(
       _prevButton(lm),

@@ -41,7 +41,7 @@ object App extends JFXApp3 {
     lm.buildLayout
 
     borderPane.center <== lm.getGrid
-    borderPane.setBottom(BottomBar(lm))
+    borderPane.setBottom(BottomBar(lm, borderPane))
 
     stage = new JFXApp3.PrimaryStage {
       title = "Decklify"
