@@ -21,10 +21,10 @@ object HttpService {
   private def BASE_URL: String = ServerTracker.getUrl.getOrElse {
     throw new IllegalStateException("Server not available")
   }
-  private val LAYOUT_URI = URI.create(BASE_URL + "/layout")
-  private val MACRO_URI = (macroName: String) =>
+  private def LAYOUT_URI = URI.create(BASE_URL + "/layout")
+  private def MACRO_URI = (macroName: String) =>
     URI.create(BASE_URL + s"/macro/${macroName}")
-  private val ICON_URL = (iconName: String) =>
+  private def ICON_URL = (iconName: String) =>
     URI.create(BASE_URL + s"/assets/icons/${iconName}.png")
 
   private val client = HttpClient.newBuilder
