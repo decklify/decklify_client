@@ -17,6 +17,7 @@ object App extends JFXApp3 {
 
   override def start(): Unit = {
     val jmdns = JmmDNS.Factory.getInstance()
+    ServerTracker.init(jmdns)
     jmdns.addServiceListener("_decklify._tcp.local.", ServerTracker)
 
     ServerTracker.waitForServer(() => {
