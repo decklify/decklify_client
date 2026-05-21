@@ -36,19 +36,31 @@ case class Tile(
   private def sendAction: Unit =
     action match
       case TileAction.Macro(name) =>
-        HttpService.sendMacroAsync(name).onComplete {
-          case Success(response)  => println(response)
-          case Failure(exception) =>
-            Platform.runLater {
-              showNonFatal(
-                "Failed to execute macro",
-                s"${
-                    if label.isDefined then "Tile '${label}' - " else ""
-                  }Macro '${name}' could not run",
-                exception.getMessage()
+        HttpService
+          .sendMacroAsync(name)
+          .recover {
+            case _: IllegalStateException =>
+              println(
+                "Server temporarily unavailable, will retry when reconnected"
               )
-            }
-        }
+            case e =>
+              println(s"Macro failed: ${e.getMessage}")
+          }
+          .onComplete {
+            case Success(response)  => println(response)
+            case Failure(exception) =>
+              Platform.runLater {
+                showNonFatal(
+                  "Failed to execute macro",
+                  s"${
+                      if label.isDefined
+                      then s"Tile '${label.get.toString}' - "
+                      else ""
+                    }Macro '${name}' could not run",
+                  exception.getMessage()
+                )
+              }
+          }
 
   private def createBlurredBgSlice(
       pane: StackPane,

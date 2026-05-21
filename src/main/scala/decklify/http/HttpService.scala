@@ -54,17 +54,22 @@ object HttpService {
       }
 
   def sendMacroAsync(macroName: String): Future[String] =
-    val request = HttpRequest
-      .newBuilder()
-      .uri(MACRO_URI(macroName))
-      .POST(BodyPublishers.noBody())
-      .timeout(Duration.ofSeconds(5))
-      .build()
+    ServerTracker.getUrl match {
+      case None =>
+        Future.failed(new IllegalStateException("Server not available"))
+      case Some(_) =>
+        val request = HttpRequest
+          .newBuilder()
+          .uri(MACRO_URI(macroName))
+          .POST(BodyPublishers.noBody())
+          .timeout(Duration.ofSeconds(5))
+          .build()
 
-    client
-      .sendAsync(request, BodyHandlers.ofString())
-      .asScala
-      .map(_.body())
+        client
+          .sendAsync(request, BodyHandlers.ofString())
+          .asScala
+          .map(_.body())
+    }
 
   def fetchLayoutConfig: Try[LayoutConfig] =
     Try {
