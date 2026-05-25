@@ -70,10 +70,6 @@ fi
 # OPTIONAL: REMOVE SDKMAN
 # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# OPTIONAL: REMOVE SDKMAN
-# -----------------------------------------------------------------------------
-
 read -r -p "Remove SDKman entirely? [y/N] " remove_sdkman
 if [[ "${remove_sdkman,,}" == "y" ]]; then
   read -r -p "Backup SDKman first? [y/N] " backup_sdkman
