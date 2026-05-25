@@ -1,43 +1,59 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-VERSION_PATH="/opt/decklify/app/version.txt"
-APP_PATH="/opt/decklify/app/current"
+VERSION_FILE="/opt/decklify/app/version.txt"
+APP_JAR="/opt/decklify/app/current/app.jar"
+JAVA="/home/$USER/.sdkman/candidates/java/current/bin/java"
+REPO="decklify/decklify_client"
 
-echo "⬇️ Fetching latest release..."
+# -----------------------------------------------------------------------------
+# FETCH RELEASE INFO
+# -----------------------------------------------------------------------------
 
-RELEASE_JSON=$(curl -fsSL -H "Accept: application/vnd.github+json" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
-    https://api.github.com/repos/decklify/decklify_client/releases/latest)
+echo "⬇️  Fetching latest release..."
 
-ASSET_ID=$(jq -r '.assets[] | select(.name | endswith(".jar")) | .id' <<< "$RELEASE_JSON")
+RELEASE_JSON=$(curl -fsSL \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  "https://api.github.com/repos/$REPO/releases/latest")
 
-CURRENT_TAG=$(cat $VERSION_PATH)
 LATEST_TAG=$(jq -r '.tag_name' <<< "$RELEASE_JSON")
+ASSET_ID=$(jq -r '.assets[] | select(.name | endswith(".jar")) | .id' <<< "$RELEASE_JSON")
+CURRENT_TAG=$(cat "$VERSION_FILE")
 
-CURRENT_TAG=${CURRENT_TAG#v}
-LATEST_TAG=${LATEST_TAG#v}
+# Strip leading 'v' for comparison
+CURRENT_TAG="${CURRENT_TAG#v}"
+LATEST_TAG="${LATEST_TAG#v}"
 
-echo "🔧 Checking if installed app is up to date"
+# -----------------------------------------------------------------------------
+# UPDATE IF NEEDED
+# -----------------------------------------------------------------------------
 
 if [[ "$(printf '%s\n' "$CURRENT_TAG" "$LATEST_TAG" | sort -V | head -n1)" != "$LATEST_TAG" ]]; then
-    echo "⬇️ Downloading latest version..."
+  echo "⬇️  Downloading $LATEST_TAG..."
 
-    curl -L -H "Accept: application/octet-stream" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        -o "$APP_PATH/app.jar.new" \
-        https://api.github.com/repos/decklify/decklify_client/releases/assets/$ASSET_ID
+  curl -fsSL \
+    -H "Accept: application/octet-stream" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    -o "${APP_JAR}.new" \
+    "https://api.github.com/repos/$REPO/releases/assets/$ASSET_ID"
 
-    if [[ ! -s "$APP_PATH/app.jar.new" ]]; then
-        echo "Download failed"
-        exit 1
-    fi
-
-    echo "$LATEST_TAG" > "$VERSION_PATH"
-    mv "$APP_PATH/app.jar.new" "$APP_PATH/app.jar"
+  mv "${APP_JAR}.new" "$APP_JAR"
+  echo "$LATEST_TAG" > "$VERSION_FILE"
+  echo "✅ Updated to $LATEST_TAG"
+else
+  echo "✅ Already on latest ($CURRENT_TAG)"
 fi
 
-echo "🚀 Launching app!"
+# -----------------------------------------------------------------------------
+# LAUNCH
+# -----------------------------------------------------------------------------
 
-exec /home/$USER/.sdkman/candidates/java/current/bin/java -Dprism.order=es2 -Dprism.forceGPU=true -Dmonocle.platform=DRM -jar "$APP_PATH/app.jar"
+echo "🚀 Launching..."
+
+exec "$JAVA" \
+  -Dprism.order=es2 \
+  -Dprism.forceGPU=true \
+  -Dmonocle.platform=DRM \
+  -jar "$APP_JAR"
