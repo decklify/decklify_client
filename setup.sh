@@ -6,7 +6,7 @@
 # This script installs Decklify and its dependencies.
 #
 # Usage:
-#   curl https://github.com/you/repo/setup.sh | sudo bash
+#   curl https://raw.githubusercontent.com/decklify/decklify_client/master/setup.sh | sudo bash
 #
 # Testing:
 #   BASE=/tmp/decklify-test sudo ./setup.sh
@@ -125,6 +125,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=$SUDO_USER
+ExecStartPre=/bin/bash -c 'until ping -c1 -W1 224.0.0.251 > /dev/null 2>&1; do sleep 1; done'
 ExecStart=${BASE}/launch.sh
 Restart=always
 RestartSec=2
