@@ -85,6 +85,17 @@ curl -fsSL \
 chmod +x "$TMP/launch.sh"
 
 # -----------------------------------------------------------------------------
+# NETWORK MANAGER
+# -----------------------------------------------------------------------------
+
+echo "Configuring network manager..."
+
+systemctl disable systemd-networkd-wait-online 2>/dev/null || true
+systemctl enable NetworkManager-wait-online 2>/dev/null || true
+
+echo "Network manager configured"
+
+# -----------------------------------------------------------------------------
 # SYSTEMD SERVICE
 # -----------------------------------------------------------------------------
 
@@ -93,8 +104,8 @@ echo "🧠 Creating systemd service"
 cat > "$TMP/${SERVICE_NAME}.service" <<EOF
 [Unit]
 Description=Decklify
-After=network-online.target graphical.target
-Wants=network-online.target
+After=NetworkManager-wait-online.service graphical.target
+Wants=NetworkManager-wait-online.service
 
 [Service]
 Type=simple
