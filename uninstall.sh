@@ -55,10 +55,12 @@ fi
 
 read -r -p "Remove Java 23 (installed via SDKman)? [y/N] " remove_java
 if [[ "${remove_java,,}" == "y" ]]; then
+  echo "🗑️  Removing Java 23..."
   sudo -u "$SUDO_USER" bash -c "
     source '/home/$SUDO_USER/.sdkman/bin/sdkman-init.sh'
-    sdk uninstall java 23.0.2-tem
-  " && echo "✅ Java 23 removed" || echo "⚠️  Java removal failed, skipping"
+    sdk uninstall java 23.0.2-tem --force
+  "
+  echo "✅ Java 23 removed"
 fi
 
 # -----------------------------------------------------------------------------
