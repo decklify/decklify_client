@@ -20,6 +20,9 @@ SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 [[ "$EUID" -eq 0 ]] || { echo "Please run as root (sudo)"; exit 1; }
 [[ -n "${SUDO_USER:-}" ]] || { echo "SUDO_USER is not set"; exit 1; }
 
+read -r -p "⚠️  This will uninstall Decklify. Continue? [y/N] " confirm
+[[ "${confirm,,}" == "y" ]] || { echo "Aborted"; exit 0; }
+
 # -----------------------------------------------------------------------------
 # STOP & DISABLE SERVICE
 # -----------------------------------------------------------------------------
