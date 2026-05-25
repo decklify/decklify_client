@@ -4,7 +4,7 @@
 # Decklify setup script
 #
 # Usage:
-#   curl https://raw.githubusercontent.com/decklify/decklify_client/master/setup.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/decklify/decklify_client/master/setup.sh | sudo bash
 #
 # Testing:
 #   BASE=/tmp/decklify-test sudo ./setup.sh
