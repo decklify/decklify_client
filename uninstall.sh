@@ -20,7 +20,7 @@ SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 [[ "$EUID" -eq 0 ]] || { echo "Please run as root (sudo)"; exit 1; }
 [[ -n "${SUDO_USER:-}" ]] || { echo "SUDO_USER is not set"; exit 1; }
 
-read -r -p "⚠️  This will uninstall Decklify. Continue? [y/N] " confirm
+read -r -p "⚠️  This will uninstall Decklify. Continue? [y/N] " confirm </dev/tty
 [[ "${confirm,,}" == "y" ]] || { echo "Aborted"; exit 0; }
 
 # -----------------------------------------------------------------------------
@@ -56,20 +56,20 @@ fi
 # OPTIONAL: REMOVE JAVA
 # -----------------------------------------------------------------------------
 
-read -r -p "Remove Java 23 (installed via SDKman)? [y/N] " remove_java
+read -r -p "Remove Java 23 (installed via SDKman)? [y/N] " remove_java </dev/tty
 if [[ "${remove_java,,}" == "y" ]]; then
-  echo "🗑️ Removing Java 23..."
+  echo "Removing Java 23..."
   sudo -u "$SUDO_USER" bash -c "source /home/$SUDO_USER/.sdkman/bin/sdkman-init.sh && sdk uninstall java 23.0.2-tem --force"
-  echo "✅ Java 23 removed"
+  echo "Java 23 removed"
 fi
 
 # -----------------------------------------------------------------------------
 # OPTIONAL: REMOVE SDKMAN
 # -----------------------------------------------------------------------------
 
-read -r -p "Remove SDKman entirely? [y/N] " remove_sdkman
+read -r -p "Remove SDKman entirely? [y/N] " remove_sdkman </dev/tty
 if [[ "${remove_sdkman,,}" == "y" ]]; then
-  read -r -p "Backup SDKman first? [y/N] " backup_sdkman
+  read -r -p "Backup SDKman first? [y/N] " backup_sdkman </dev/tty
   if [[ "${backup_sdkman,,}" == "y" ]]; then
     sudo -u "$SUDO_USER" bash -c "
       tar zcf \"/home/$SUDO_USER/sdkman-backup_\$(date +%F-%kh%M).tar.gz\" \
