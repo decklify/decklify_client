@@ -47,7 +47,8 @@ apt install -y \
   curl \
   jq \
   unzip \
-  zip
+  zip \
+  avahi-utils
 
 if [[ ! -d "/home/$SUDO_USER/.sdkman" ]]; then
   sudo -u "$SUDO_USER" bash -c "curl -s 'https://get.sdkman.io?ci=true' | bash"
@@ -91,6 +92,14 @@ chmod +x "$TMP/launch.sh"
 echo "Configuring network manager..."
 
 systemctl disable systemd-networkd-wait-online 2>/dev/null || true
+
+mkdir -p /etc/systemd/system/NetworkManager-wait-online.service.d
+cat > /etc/systemd/system/NetworkManager-wait-online.service.d/override.conf <<EOF
+[Service]
+ExecStart=
+ExecStart=/usr/bin/nm-online -s --timeout=30
+EOF
+
 systemctl enable NetworkManager-wait-online 2>/dev/null || true
 
 echo "Network manager configured"
@@ -104,13 +113,18 @@ echo "🧠 Creating systemd service"
 cat > "$TMP/${SERVICE_NAME}.service" <<EOF
 [Unit]
 Description=Decklify
-After=NetworkManager-wait-online.service graphical.target
-Wants=NetworkManager-wait-online.service
+After=avahi-daemon.service network-online.target graphical.target
+Wants=avahi-daemon.service network-online.target
 
 [Service]
 Type=simple
 User=$SUDO_USER
-ExecStartPre=/bin/bash -c 'until ping -c1 -W1 224.0.0.251 >/dev/null 2>&1; do sleep 1; done'
+ExecStartPre=/bin/bash -c '\
+  for i in $(seq 1 30); do \
+    avahi-browse -t _decklify._tcp 2>/dev/null | grep -q "=" && exit 0; \
+    sleep 1; \
+  done; \
+  exit 1'
 ExecStart=${BASE}/launch.sh
 Restart=always
 RestartSec=2
