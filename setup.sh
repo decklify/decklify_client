@@ -74,7 +74,7 @@ touch "$TMP/app/version.txt" "$TMP/log/app.log"
 cat > "$TMP/wait-mdns.sh" <<'EOF'
 #!/bin/bash
 for i in $(seq 1 30); do
-  avahi-browse -t _decklify._tcp 2>/dev/null | grep -q "+" && exit 0
+  avahi-browse -t -r _decklify._tcp 2>/dev/null | grep -q "=" && exit 0
   sleep 1
 done
 exit 1
