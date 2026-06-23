@@ -71,6 +71,16 @@ rm -rf "$TMP"
 mkdir -p "$TMP/app/current" "$TMP/log"
 touch "$TMP/app/version.txt" "$TMP/log/app.log"
 
+cat > "$TMP/wait-mdns.sh" <<'EOF'
+#!/bin/bash
+for i in $(seq 1 30); do
+  avahi-browse -t _decklify._tcp 2>/dev/null | grep -q "+" && exit 0
+  sleep 1
+done
+exit 1
+EOF
+chmod +x "$TMP/wait-mdns.sh"
+
 # -----------------------------------------------------------------------------
 # DOWNLOAD
 # -----------------------------------------------------------------------------
@@ -119,12 +129,7 @@ Wants=avahi-daemon.service network-online.target
 [Service]
 Type=simple
 User=$SUDO_USER
-ExecStartPre=/bin/bash -c '\
-  for i in $(seq 1 30); do \
-    avahi-browse -t _decklify._tcp 2>/dev/null | grep -q "=" && exit 0; \
-    sleep 1; \
-  done; \
-  exit 1'
+ExecStartPre=${BASE}/wait-mdns.sh
 ExecStart=${BASE}/launch.sh
 Restart=always
 RestartSec=2
