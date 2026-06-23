@@ -8,69 +8,51 @@ JAVA="/home/$USER/.sdkman/candidates/java/current/bin/java"
 REPO="decklify/decklify_client"
 
 # -----------------------------------------------------------------------------
-# DOWNLOAD
+# FETCH RELEASE INFO
 # -----------------------------------------------------------------------------
 
-if [[ ! -f "$APP_JAR" ]]; then
-  echo "⬇️  Downloading app..."
-  RELEASE_JSON=$(curl -fsSL --max-time 30 \
-    -H "Accept: application/vnd.github+json" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
-    "https://api.github.com/repos/$REPO/releases/latest")
+echo "⬇️  Fetching latest release..."
 
-  LATEST_TAG=$(jq -r '.tag_name' <<< "$RELEASE_JSON")
-  ASSET_ID=$(jq -r '.assets[] | select(.name | endswith(".jar")) | .id' <<< "$RELEASE_JSON")
+RELEASE_JSON=$(curl -fsSL \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  "https://api.github.com/repos/$REPO/releases/latest")
 
-  curl -fsSL --max-time 120 \
+LATEST_TAG=$(jq -r '.tag_name' <<< "$RELEASE_JSON")
+ASSET_ID=$(jq -r '.assets[] | select(.name | endswith(".jar")) | .id' <<< "$RELEASE_JSON")
+CURRENT_TAG=$(cat "$VERSION_FILE")
+
+# Strip leading 'v' for comparison
+CURRENT_TAG="${CURRENT_TAG#v}"
+LATEST_TAG="${LATEST_TAG#v}"
+
+# -----------------------------------------------------------------------------
+# UPDATE IF NEEDED
+# -----------------------------------------------------------------------------
+
+if [[ "$(printf '%s\n' "$CURRENT_TAG" "$LATEST_TAG" | sort -V | head -n1)" != "$LATEST_TAG" ]]; then
+  echo "⬇️  Downloading $LATEST_TAG..."
+
+  curl -fsSL \
     -H "Accept: application/octet-stream" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
-    -o "$APP_JAR" \
+    -o "${APP_JAR}.new" \
     "https://api.github.com/repos/$REPO/releases/assets/$ASSET_ID"
 
-  echo "${LATEST_TAG#v}" > "$VERSION_FILE"
-  echo "✅ Downloaded $LATEST_TAG"
+  mv "${APP_JAR}.new" "$APP_JAR"
+  echo "$LATEST_TAG" > "$VERSION_FILE"
+  echo "✅ Updated to $LATEST_TAG"
+else
+  echo "✅ Already on latest ($CURRENT_TAG)"
 fi
 
 # -----------------------------------------------------------------------------
-# BACKGROUND UPDATE CHECK
-# -----------------------------------------------------------------------------
-
-update_if_needed() {
-  RELEASE_JSON=$(curl -fsSL --max-time 10 \
-    -H "Accept: application/vnd.github+json" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
-    "https://api.github.com/repos/$REPO/releases/latest") || return 0
-
-  LATEST_TAG=$(jq -r '.tag_name' <<< "$RELEASE_JSON")
-  ASSET_ID=$(jq -r '.assets[] | select(.name | endswith(".jar")) | .id' <<< "$RELEASE_JSON")
-  CURRENT_TAG=$(cat "$VERSION_FILE")
-
-  CURRENT_TAG="${CURRENT_TAG#v}"
-  LATEST_TAG="${LATEST_TAG#v}"
-
-  if [[ "$(printf '%s\n' "$CURRENT_TAG" "$LATEST_TAG" | sort -V | head -n1)" != "$LATEST_TAG" ]]; then
-    echo "⬇️ Downloading $LATEST_TAG..."
-    curl -fsSL --max-time 60 \
-      -H "Accept: application/octet-stream" \
-      -H "X-GitHub-Api-Version: 2022-11-28" \
-      -o "${APP_JAR}.new" \
-      "https://api.github.com/repos/$REPO/releases/assets/$ASSET_ID"
-    mv "${APP_JAR}.new" "$APP_JAR"
-    echo "$LATEST_TAG" > "$VERSION_FILE"
-    echo "✅ Updated to $LATEST_TAG, restart required"
-  fi
-}
-
-update_if_needed &
-
-# -----------------------------------------------------------------------------
-# LAUNCH IMMEDIATELY
+# LAUNCH
 # -----------------------------------------------------------------------------
 
 echo "🚀 Launching..."
 
 exec "$JAVA" \
-  -XX:TieredStopAtLevel=1 \
   -Dprism.order=es2 \
   -Dprism.forceGPU=true \
   -Dmonocle.platform=DRM \
