@@ -96,21 +96,21 @@ curl -fsSL \
 chmod +x "$TMP/launch.sh"
 
 # -----------------------------------------------------------------------------
-# NETWORK MANAGER
+# NETWORK MANAGER & SERVICES
 # -----------------------------------------------------------------------------
 
 echo "Configuring network manager..."
 
 systemctl disable systemd-networkd-wait-online 2>/dev/null || true
+systemctl disable NetworkManager-wait-online 2>/dev/null || true
 
-mkdir -p /etc/systemd/system/NetworkManager-wait-online.service.d
-cat > /etc/systemd/system/NetworkManager-wait-online.service.d/override.conf <<EOF
-[Service]
-ExecStart=
-ExecStart=/usr/bin/nm-online -s --timeout=30
-EOF
-
-systemctl enable NetworkManager-wait-online 2>/dev/null || true
+# Disable unused services to speed up startup time
+systemctl disable ModemManager.service 2>/dev/null || true
+systemctl disable e2scrub_reap.service 2>/dev/null || true
+systemctl disable rpc-statd-notify.service 2>/dev/null || true
+systemctl disable cloud-init-main.service 2>/dev/null || true
+systemctl disable cloud-config.service 2>/dev/null || true
+systemctl disable cloud-init-local.service 2>/dev/null || true
 
 echo "Network manager configured"
 
@@ -123,8 +123,8 @@ echo "🧠 Creating systemd service"
 cat > "$TMP/${SERVICE_NAME}.service" <<EOF
 [Unit]
 Description=Decklify
-After=avahi-daemon.service network-online.target graphical.target
-Wants=avahi-daemon.service network-online.target
+After=avahi-daemon.service graphical.target
+Wants=avahi-daemon.service
 
 [Service]
 Type=simple
