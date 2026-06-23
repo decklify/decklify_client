@@ -8,6 +8,30 @@ JAVA="/home/$USER/.sdkman/candidates/java/current/bin/java"
 REPO="decklify/decklify_client"
 
 # -----------------------------------------------------------------------------
+# DOWNLOAD
+# -----------------------------------------------------------------------------
+
+if [[ ! -f "$APP_JAR" ]]; then
+  echo "⬇️  Downloading app..."
+  RELEASE_JSON=$(curl -fsSL --max-time 30 \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    "https://api.github.com/repos/$REPO/releases/latest")
+
+  LATEST_TAG=$(jq -r '.tag_name' <<< "$RELEASE_JSON")
+  ASSET_ID=$(jq -r '.assets[] | select(.name | endswith(".jar")) | .id' <<< "$RELEASE_JSON")
+
+  curl -fsSL --max-time 120 \
+    -H "Accept: application/octet-stream" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    -o "$APP_JAR" \
+    "https://api.github.com/repos/$REPO/releases/assets/$ASSET_ID"
+
+  echo "${LATEST_TAG#v}" > "$VERSION_FILE"
+  echo "✅ Downloaded $LATEST_TAG"
+fi
+
+# -----------------------------------------------------------------------------
 # BACKGROUND UPDATE CHECK
 # -----------------------------------------------------------------------------
 
@@ -25,7 +49,7 @@ update_if_needed() {
   LATEST_TAG="${LATEST_TAG#v}"
 
   if [[ "$(printf '%s\n' "$CURRENT_TAG" "$LATEST_TAG" | sort -V | head -n1)" != "$LATEST_TAG" ]]; then
-    echo "⬇️  Downloading $LATEST_TAG..."
+    echo "⬇️ Downloading $LATEST_TAG..."
     curl -fsSL --max-time 60 \
       -H "Accept: application/octet-stream" \
       -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -33,7 +57,7 @@ update_if_needed() {
       "https://api.github.com/repos/$REPO/releases/assets/$ASSET_ID"
     mv "${APP_JAR}.new" "$APP_JAR"
     echo "$LATEST_TAG" > "$VERSION_FILE"
-    echo "✅ Updated to $LATEST_TAG — restart required"
+    echo "✅ Updated to $LATEST_TAG, restart required"
   fi
 }
 
